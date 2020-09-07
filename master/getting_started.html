@@ -101,15 +101,22 @@
 <h1>Getting Started with CarePet: A sample IoT App<a class="headerlink" href="#getting-started-with-carepet-a-sample-iot-app" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>In this guided exercise, you’ll create an IoT app from scratch and configure it to use ScyllaDB as the backend datastore.
-We’ll use as an example, an application called CarePet, which collects and analyzes data from sensors attached to a pet’s collar and monitors the pet’s health and activity.
-The example can be used, with minimal changes, for any IoT like application.
-We’ll go over the different stages of the development, from gathering requirements, creating the data model, cluster sizing and hardware needed to match the requirements, and finally building and running the application.</p>
+<p>In this guided exercise, you’ll create an IoT app from scratch and configure it
+to use ScyllaDB as the backend datastore.</p>
+<p>We’ll use as an example, an application called CarePet, which collects and
+analyzes data from sensors attached to a pet’s collar and monitors the pet’s
+health and activity.</p>
+<p>The example can be used, with minimal changes, for any IoT like application.</p>
+<p>We’ll go over the different stages of the development, from gathering
+requirements, creating the data model, cluster sizing and hardware needed to
+match the requirements, and finally building and running the application.</p>
 </div>
 <div class="section" id="use-case-requirements">
 <h2>Use Case Requirements<a class="headerlink" href="#use-case-requirements" title="Permalink to this headline">¶</a></h2>
-<p>Each pet collar includes sensors that report four different measurements: Temperature, Pulse, Location, and Respiration.
-The collar reads the sensor’s data once a second and sends measurements directly to the app.</p>
+<p>Each pet collar includes sensors that report four different measurements:
+Temperature, Pulse, Location, and Respiration.</p>
+<p>The collar reads the sensor’s data once a second and sends measurements
+directly to the app.</p>
 </div>
 <div class="section" id="performance-requirements">
 <h2>Performance Requirements<a class="headerlink" href="#performance-requirements" title="Permalink to this headline">¶</a></h2>
@@ -122,13 +129,19 @@ The collar reads the sensor’s data once a second and sends measurements direct
 <p>Required SLA:</p>
 <ul class="simple">
 <li><p>Writes throughput of 100K Operations per second</p></li>
-<li><p>Reads: latency of up to 10 milliseconds for the <a class="reference external" href="https://engineering.linkedin.com/performance/who-moved-my-99th-percentile-latency">99th percentile</a>.</p></li>
+<li><p>Reads: latency of up to 10 milliseconds for the
+<a class="reference external" href="https://engineering.linkedin.com/performance/who-moved-my-99th-percentile-latency">99th percentile</a>.</p></li>
 </ul>
-<p>The application requires high availability and fault tolerance. Even if a ScyllaDB node goes down or becomes unavailable, the cluster is expected to remain available and continue to provide service. You can learn more about Scylla high availability in <a class="reference external" href="https://university.scylladb.com/courses/scylla-essentials-overview/lessons/high-availability/">this lesson</a>.</p>
+<p>The application requires high availability and fault tolerance. Even if a
+ScyllaDB node goes down or becomes unavailable, the cluster is expected to
+remain available and continue to provide service. You can learn more about
+Scylla high availability in <a class="reference external" href="https://university.scylladb.com/courses/scylla-essentials-overview/lessons/high-availability/">this lesson</a>.</p>
 </div>
 <div class="section" id="design-and-data-model">
 <h2>Design and Data Model<a class="headerlink" href="#design-and-data-model" title="Permalink to this headline">¶</a></h2>
-<p>In this part  we’ll think about our queries, make the primary key and clustering key selection, and create the database schema. See more in the data model design <a class="reference internal" href="design_and_data_model.html"><span class="doc">document</span></a>.</p>
+<p>In this part  we’ll think about our queries, make the primary key and
+clustering key selection, and create the database schema. See more in the data
+model design <a class="reference internal" href="design_and_data_model.html"><span class="doc">document</span></a>.</p>
 </div>
 <div class="section" id="deploying-the-app">
 <h2>Deploying the App<a class="headerlink" href="#deploying-the-app" title="Permalink to this headline">¶</a></h2>
@@ -138,11 +151,14 @@ The collar reads the sensor’s data once a second and sends measurements direct
 <li><p><a class="reference external" href="https://www.docker.com/">docker</a></p></li>
 <li><p><a class="reference external" href="https://docs.docker.com/compose/">docker-compose</a></p></li>
 </ul>
-<p>The example application uses Docker to run a three-node ScyllaDB cluster. It allows tracking of pet’s health indicators and consists of three parts:</p>
+<p>The example application uses Docker to run a three-node ScyllaDB cluster. It
+allows tracking of pet’s health indicators and consists of three parts:</p>
 <ul class="simple">
 <li><p>migrate (/cmd/migrate) - creates the CarePet keyspace and tables</p></li>
-<li><p>collar (/cmd/sensor) - generates a pet health data and pushes it into the storage</p></li>
-<li><p>web app (/cmd/server) - REST API service for tracking the pets’ health state</p></li>
+<li><p>collar (/cmd/sensor) - generates a pet health data and pushes it into the
+storage</p></li>
+<li><p>web app (/cmd/server) - REST API service for tracking the pets’ health
+state</p></li>
 </ul>
 <p>Download the example code from git:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone git@github.com:scylladb/care-pet.git
@@ -258,8 +274,8 @@ $ ./server --port 8000 --hosts $NODE1
 <span class="p">{</span><span class="s2">&quot;code&quot;</span><span class="p">:</span><span class="mi">404</span><span class="p">,</span><span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;path / was not found&quot;</span><span class="p">}</span>
 </pre></div>
 </div>
-<p>If you see this JSON in the end with 404, it means everything works as expected.
-To read an owner’s data use the previously saved owner_id as follows:</p>
+<p>If you see this JSON in the end with 404, it means everything works as
+expected. To read an owner’s data use the previously saved owner_id as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -v http://127.0.0.1:8000/api/owner/{owner_id}
 </pre></div>
 </div>
@@ -333,16 +349,23 @@ $ curl http://127.0.0.1:8000/api/pet/cef72f58-fc78-4cae-92ae-fb3c3eed35c4/sensor
 | /db/cql      | database schema                     |
 | /handler     | swagger REST API handlers           |
 | /model       | application models and ORM metadata |</p>
-<p>After data is collected from the pets via the sensors on their collars, it is delivered to the central database for analysis and for health status checking.</p>
-<p>The collar code sits in the /cmd/sensor and uses scylladb/gocqlx Go driver to connect to the database directly and publish its data. The collar sends a sensor measurement update once a second.</p>
+<p>After data is collected from the pets via the sensors on their collars, it is
+delivered to the central database for analysis and for health status checking.</p>
+<p>The collar code sits in the /cmd/sensor and uses scylladb/gocqlx Go driver to
+connect to the database directly and publish its data. The collar sends a
+sensor measurement update once a second.</p>
 <p>Overall all applications in this repository use scylladb/gocqlx for:</p>
 <ul class="simple">
 <li><p>Relational Object Mapping (ORM)</p></li>
 <li><p>Building Queries</p></li>
 <li><p>Migrating database schemas</p></li>
 </ul>
-<p>The web application’s REST API server resides in /cmd/server and uses go-swagger that supports OpenAPI 2.0 to expose its API. API handlers reside in /handler. Most of the queries are reads.</p>
-<p>The application is capable of caching sensor measurements data on an hourly basis. It uses Lazy Evaluation to manage sensor_avg. It can be viewed as an application-level lazy-evaluated materialized view.</p>
+<p>The web application’s REST API server resides in /cmd/server and uses
+go-swagger that supports OpenAPI 2.0 to expose its API. API handlers reside in
+/handler. Most of the queries are reads.</p>
+<p>The application is capable of caching sensor measurements data on an hourly
+basis. It uses Lazy Evaluation to manage sensor_avg. It can be viewed as an
+application-level lazy-evaluated materialized view.</p>
 <p>The algorithm is simple and resides in /handler/avg.go:</p>
 <ul class="simple">
 <li><p>read sensor_avg</p></li>
@@ -467,7 +490,7 @@ $ curl http://127.0.0.1:8000/api/pet/cef72f58-fc78-4cae-92ae-fb3c3eed35c4/sensor
                 &#169; 2012, ScyllaDB. All rights reserved.
             </div>
             <div class="footer-last-updated">
-                Last updated on 03 September 2020.
+                Last updated on 07 September 2020.
             </div>
         </div>
         <div class="footer-links">

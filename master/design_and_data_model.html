@@ -99,30 +99,44 @@
 
             <div class="section" id="design-and-data-model">
 <h1>Design and Data Model<a class="headerlink" href="#design-and-data-model" title="Permalink to this headline">¶</a></h1>
-<p>You can learn more about Data Modeling in Scylla (and NoSQL) by taking <a class="reference external" href="https://university.scylladb.com/courses/data-modeling/">this course</a> on Scylla University. The main goal of data modeling in Scylla is to perform queries fast, even if we sometimes have to duplicate data.</p>
-<p>Let’s build our schema around the queries we are going to run against our domain entities. When creating the data model, you need to consider both the conceptual data model and the application workflow: which queries will be performed by which users and how often.</p>
+<p>You can learn more about Data Modeling in Scylla (and NoSQL) by taking
+<a class="reference external" href="https://university.scylladb.com/courses/data-modeling/">this course</a> on Scylla
+University. The main goal of data modeling in Scylla is to perform queries fast,
+even if we sometimes have to duplicate data.</p>
+<p>Let’s build our schema around the queries we are going to run against our domain
+entities. When creating the data model, you need to consider both the conceptual
+data model and the application workflow: which queries will be performed by
+which users and how often.</p>
 <p>To achieve that, we want:</p>
 <ul class="simple">
 <li><p>Even data distribution</p></li>
 <li><p>To minimize the number of partitions accessed in a read query.</p></li>
 </ul>
-<p>On the other hand, our focus won’t be on avoiding data duplication or minimizing the number of writes.
-You’re probably familiar with the steps defined here:</p>
+<p>On the other hand, our focus won’t be on avoiding data duplication or minimizing
+the number of writes. You’re probably familiar with the steps defined here:</p>
 <p><img alt="https://lh5.googleusercontent.com/5JqE89v8KJbSuVsnGswHn83sJOV-tjpeH6r1fqdNl6S77ncqAYb3kIZPSgNI8bqN_43OyZNbHQVpXdqMBFrRmsEvG3JORR302EhMnIb9qa6nuNL7cP2JJDZ4Uon_Pp-QmSCoEQ" src="https://lh5.googleusercontent.com/5JqE89v8KJbSuVsnGswHn83sJOV-tjpeH6r1fqdNl6S77ncqAYb3kIZPSgNI8bqN_43OyZNbHQVpXdqMBFrRmsEvG3JORR302EhMnIb9qa6nuNL7cP2JJDZ4Uon_Pp-QmSCoEQ" /></p>
 <div class="section" id="conceptual-data-model">
 <h2>Conceptual Data Model<a class="headerlink" href="#conceptual-data-model" title="Permalink to this headline">¶</a></h2>
-<p>Starting with the conceptual data model, we need to identify the key entities and the relationships between them. Our application has pets. Each dog can be tracked by many followers (typically the owners). A follower can also track more than one dog. Each dog can have a few sensors. Each sensor takes measurements:</p>
+<p>Starting with the conceptual data model, we need to identify the key entities
+and the relationships between them. Our application has pets. Each dog can be
+tracked by many followers (typically the owners). A follower can also track more
+than one dog. Each dog can have a few sensors. Each sensor takes measurements:</p>
 <p><img alt="https://lh3.googleusercontent.com/GrFS0HY7XgABabCEp5Fbc0dULsujHkvSykFMiMZRI5TjJTYrzckVCJ29L4BgnEqc8dB7t1_VzsRsJCJjwiNI8xHdQ0tGh9qZptZfRsq7gDXHVogwfJG8Y_DIEJrgLX40zjvV5w" src="https://lh3.googleusercontent.com/GrFS0HY7XgABabCEp5Fbc0dULsujHkvSykFMiMZRI5TjJTYrzckVCJ29L4BgnEqc8dB7t1_VzsRsJCJjwiNI8xHdQ0tGh9qZptZfRsq7gDXHVogwfJG8Y_DIEJrgLX40zjvV5w" /></p>
 </div>
 <div class="section" id="application-workflow">
 <h2>Application Workflow<a class="headerlink" href="#application-workflow" title="Permalink to this headline">¶</a></h2>
-<p>Next, we move on to the Application Workflow. In this part, we identify the main queries or what questions we will ask the database. This part is important in Scylla, and other NoSQL databases and, as opposed to relational databases is performed early on in the data modeling process. Remember that our data modeling is built around the queries.</p>
+<p>Next, we move on to the Application Workflow. In this part, we identify the main
+queries or what questions we will ask the database. This part is important in
+Scylla, and other NoSQL databases and, as opposed to relational databases is
+performed early on in the data modeling process. Remember that our data modeling
+is built around the queries.</p>
 <p><img alt="https://lh5.googleusercontent.com/bHN-aBIt-cJ-77s5AWn6Dt0djC-gLQRSArF6b56s3mxpzx-0oG3TgXYOJzTOwrhUUdT0WcEZPTTTdk8B4aY2fbGMgs044DKxwPMC1ATrphI4GBRS8rcVboWpjlg5cO4JRcTZxQ" src="https://lh5.googleusercontent.com/bHN-aBIt-cJ-77s5AWn6Dt0djC-gLQRSArF6b56s3mxpzx-0oG3TgXYOJzTOwrhUUdT0WcEZPTTTdk8B4aY2fbGMgs044DKxwPMC1ATrphI4GBRS8rcVboWpjlg5cO4JRcTZxQ" /></p>
 </div>
 <div class="section" id="queries">
 <h2>Queries<a class="headerlink" href="#queries" title="Permalink to this headline">¶</a></h2>
-<p>Now we can detail the above queries in <a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/basic-data-modeling-2/topic/cql-cqlsh-and-basic-cql-syntax/">CQL</a>:
-Q1: Find a Follower with a specific ID</p>
+<p>Now we can detail the above queries in
+<a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/basic-data-modeling-2/topic/cql-cqlsh-and-basic-cql-syntax/">CQL</a>:</p>
+<p>Q1: Find a Follower with a specific ID</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>SELECT * FROM owner WHERE owner_id = ?
 </pre></div>
 </div>
@@ -145,18 +159,45 @@ Q1: Find a Follower with a specific ID</p>
 </div>
 <div class="section" id="logical-data-model">
 <h2>Logical Data Model<a class="headerlink" href="#logical-data-model" title="Permalink to this headline">¶</a></h2>
-<p>Using the outcomes of the application workflow and the conceptual data model, we can now create the logical data model. At this stage, we determine how our tables will look and which fields will be used as primary and clustering keys. Selecting a primary key and clustering key is highly important, you can learn more about it in <a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/basic-data-modeling-2/">this lesson</a>.
-Remember that in Scylla, it’s better to duplicate data than to join, see more about denormalization in <a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/advanced-data-modeling/topic/denormalization/">this lesson</a>.</p>
+<p>Using the outcomes of the application workflow and the conceptual data model, we
+can now create the logical data model. At this stage, we determine how our
+tables will look and which fields will be used as primary and clustering keys.
+Selecting a primary key and clustering key is highly important, you can learn
+more about it in
+<a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/basic-data-modeling-2/">this lesson</a>.
+Remember that in Scylla, it’s better to duplicate data than to join, see more
+about denormalization in
+<a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/advanced-data-modeling/topic/denormalization/">this lesson</a>.</p>
 <p><img alt="https://lh4.googleusercontent.com/zF8v3divX_VsG5z7pOmGOtdLj7_7AVrembG6ep630WsVqJXKMthEoMyPAkfaJsU7a-np9fO84lmfbcHkPv-dX-_45Aczafnm4V7OroHgt0Kd6Ao7vLF6eK_m-d6X5TJcnylpow" src="https://lh4.googleusercontent.com/zF8v3divX_VsG5z7pOmGOtdLj7_7AVrembG6ep630WsVqJXKMthEoMyPAkfaJsU7a-np9fO84lmfbcHkPv-dX-_45Aczafnm4V7OroHgt0Kd6Ao7vLF6eK_m-d6X5TJcnylpow" /></p>
 </div>
 <div class="section" id="physical-data-model">
 <h2>Physical Data Model<a class="headerlink" href="#physical-data-model" title="Permalink to this headline">¶</a></h2>
-<p>In this part, we take the Logical Data Model above and add CQL data types. Make sure you’re familiar with the ScyllaDB (and Cassandra for that matter) <a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/advanced-data-modeling/topic/common-data-types-and-collections/">data types</a> before proceeding.
-Based on the high availability requirements, we will use a <a class="reference external" href="https://university.scylladb.com/courses/scylla-essentials-overview/lessons/high-availability/topic/fault-tolerance-replication-factor/">replication factor</a> (RF) of three. The RF is defined when we create the <a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/basic-data-modeling-2/topic/keyspace/">Keyspace</a>, as we will see later on.
-Choosing the compaction strategy is explained <a class="reference external" href="https://docs.scylladb.com/architecture/compaction/compaction-strategies/">here</a> and in <a class="reference external" href="https://university.scylladb.com/courses/scylla-operations/lessons/compaction-strategies/">this</a> University Lesson.
-For the tables sensor_avg and measurement, we will use the <a class="reference external" href="https://docs.scylladb.com/getting-started/compaction/#time-window-compactionstrategy-twcs">Time Window Compaction Strategy (TWCS)</a>. The reason is those tables contain time-series data. The “measurement” table stores sensor measurements, and the “sensor_avg” stores aggregated hourly averages. For such data, there is an optimized compaction strategy TWCS based on the Size Tiered Compaction Strategy with the fair assumption that the data at different time slots will never overlap. That isolates buckets compaction in-between the time windows into independent units reducing overall compaction write amplification.
-For the other tables, we will use the default <a class="reference external" href="https://university.scylladb.com/courses/scylla-operations/lessons/compaction-strategies/">compaction strategy</a>, <a class="reference external" href="https://university.scylladb.com/courses/scylla-operations/lessons/compaction-strategies/topic/size-tiered-and-leveled-compaction-strategies-stcs-lcs/">Size Tiered Compaction Strategy (STCS)</a>. Remember that if you are using <a class="reference external" href="https://www.scylladb.com/product/scylla-enterprise/">Scylla Enterprise</a>, you should probably be using <a class="reference external" href="https://university.scylladb.com/courses/scylla-operations/lessons/compaction-strategies/topic/incremental-compaction-strategy-ics/">Incremental Compaction Strategy (ICS)</a> as it offers better performance.
-We can now define the tables below, according to the physical data model.</p>
+<p>In this part, we take the Logical Data Model above and add CQL data types. Make
+sure you’re familiar with the ScyllaDB (and Cassandra for that matter)
+<a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/advanced-data-modeling/topic/common-data-types-and-collections/">data types</a>
+before proceeding.</p>
+<p>Based on the high availability requirements, we will use a
+<a class="reference external" href="https://university.scylladb.com/courses/scylla-essentials-overview/lessons/high-availability/topic/fault-tolerance-replication-factor/">replication factor</a>
+(RF) of three. The RF is defined when we create the
+<a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/basic-data-modeling-2/topic/keyspace/">Keyspace</a>,
+as we will see later on. Choosing the compaction strategy is explained
+<a class="reference external" href="https://docs.scylladb.com/architecture/compaction/compaction-strategies/">here</a>
+and in <a class="reference external" href="https://university.scylladb.com/courses/scylla-operations/lessons/compaction-strategies/">this</a>
+University Lesson. For the tables sensor_avg and measurement, we will use the
+<a class="reference external" href="https://docs.scylladb.com/getting-started/compaction/#time-window-compactionstrategy-twcs">Time Window Compaction Strategy (TWCS)</a>.</p>
+<p>The reason is those tables contain time-series data. The “measurement” table
+stores sensor measurements, and the “sensor_avg” stores aggregated hourly
+averages. For such data, there is an optimized compaction strategy TWCS based on
+the Size Tiered Compaction Strategy with the fair assumption that the data at
+different time slots will never overlap. That isolates buckets compaction
+in-between the time windows into independent units reducing overall compaction
+write amplification. For the other tables, we will use the default
+<a class="reference external" href="https://university.scylladb.com/courses/scylla-operations/lessons/compaction-strategies/">compaction strategy</a>,
+<a class="reference external" href="https://university.scylladb.com/courses/scylla-operations/lessons/compaction-strategies/topic/size-tiered-and-leveled-compaction-strategies-stcs-lcs/">Size Tiered Compaction Strategy (STCS)</a>.
+Remember that if you are using <a class="reference external" href="https://www.scylladb.com/product/scylla-enterprise/">Scylla Enterprise</a>, you should
+probably be using <a class="reference external" href="https://university.scylladb.com/courses/scylla-operations/lessons/compaction-strategies/topic/incremental-compaction-strategy-ics/">Incremental Compaction Strategy (ICS)</a>
+as it offers better performance. We can now define the tables below, according
+to the physical data model.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CREATE</span> <span class="n">TABLE</span> <span class="n">IF</span> <span class="n">NOT</span> <span class="n">EXISTS</span> <span class="n">owner</span> <span class="p">(</span>
     <span class="n">owner_id</span> <span class="n">UUID</span><span class="p">,</span>
     <span class="n">address</span> <span class="n">TEXT</span><span class="p">,</span>
@@ -197,8 +238,14 @@ We can now define the tables below, according to the physical data model.</p>
 <span class="p">)</span> <span class="n">WITH</span> <span class="n">compaction</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;class&#39;</span> <span class="p">:</span> <span class="s1">&#39;TimeWindowCompactionStrategy&#39;</span> <span class="p">};</span>
 </pre></div>
 </div>
-<p>Some more advanced topics not covered in this guide are <a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/advanced-data-modeling/topic/common-data-types-and-collections/">Collections</a>, User-Defined<a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/advanced-data-modeling/topic/user-defined-types-udt/"> Types</a> (UDT), expiring data with <a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/advanced-data-modeling/topic/expiring-data-with-ttl-time-to-live/">time to live (TTL)</a>, and <a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/advanced-data-modeling/topic/counters/">Counters</a>.
-To summarize, when data modeling with Scylla, we have to know our data, think about our queries, pay attention to the primary key and clustering key selection, and not be afraid to duplicate data.</p>
+<p>Some more advanced topics not covered in this guide are
+<a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/advanced-data-modeling/topic/common-data-types-and-collections/">Collections</a>,
+User-Defined<a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/advanced-data-modeling/topic/user-defined-types-udt/">Types</a>
+(UDT), expiring data with <a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/advanced-data-modeling/topic/expiring-data-with-ttl-time-to-live/">time to live (TTL)</a>,
+and <a class="reference external" href="https://university.scylladb.com/courses/data-modeling/lessons/advanced-data-modeling/topic/counters/">Counters</a>.</p>
+<p>To summarize, when data modeling with Scylla, we have to know our data, think
+about our queries, pay attention to the primary key and clustering key
+selection, and not be afraid to duplicate data.</p>
 </div>
 </div>
 
@@ -298,7 +345,7 @@ To summarize, when data modeling with Scylla, we have to know our data, think ab
                 &#169; 2012, ScyllaDB. All rights reserved.
             </div>
             <div class="footer-last-updated">
-                Last updated on 03 September 2020.
+                Last updated on 07 September 2020.
             </div>
         </div>
         <div class="footer-links">
